@@ -14,8 +14,6 @@ gmailButton.onclick = () => {
   }
 };
 
-// HOME WORK 1 (PART2)
-
 const childBlock = document.querySelector(".child_block");
 
 let positionX = 0;
@@ -38,3 +36,35 @@ const moveChildBlock = () => {
   setTimeout(moveChildBlock, 5);
 };
 moveChildBlock();
+
+const seconds = document.querySelector("#seconds");
+const startBtn = document.querySelector("#start");
+const stopBtn = document.querySelector("#stop");
+const resetBtn = document.querySelector("#reset");
+
+const gif = document.getElementById("timeGif");
+const png = document.getElementById("timePng");
+
+let interval;
+let secs = 0;
+
+startBtn.onclick = () => {
+  if (!interval) {
+    interval = setInterval(() => {
+      secs++;
+      seconds.innerText = secs;
+    }, 1000);
+  }
+};
+
+stopBtn.onclick = () => {
+  clearInterval(interval);
+  interval = null;
+};
+
+resetBtn.onclick = () => {
+  clearInterval(interval);
+  interval = null;
+  secs = 0;
+  seconds.innerText = 0;
+};
