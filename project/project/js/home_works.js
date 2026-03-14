@@ -14,23 +14,57 @@ gmailButton.onclick = () => {
   }
 };
 
-const parentBlock = document.querySelector("#parent_block");
-const childBlock = document.querySelector("#child_block");
+const childBlock = document.querySelector(".child_block");
+
 let positionX = 0;
+let positionY = 0;
 
-function moveBlock() {
-  const maxPath = parentBlock.clientWidth - childBlock.clientWidth;
-
-  positionX += 2;
-
-  childBlock.style.left = `${positionX}px`;
-
-  if (positionX < maxPath) {
-    requestAnimationFrame(moveBlock);
-  } else {
-    childBlock.style.left = `${maxPath}px`;
-    console.log("Движение завершено");
+const moveChildBlock = () => {
+  if (positionX < 448 && positionY === 0) {
+    positionX++;
+    childBlock.style.left = `${positionX}px`;
+  } else if (positionX >= 448 && positionY < 448) {
+    positionY++;
+    childBlock.style.top = `${positionY}px`;
+  } else if (positionY >= 448 && positionX > 0) {
+    positionX--;
+    childBlock.style.left = `${positionX}px`;
+  } else if (positionX === 0 && positionY > 0) {
+    positionY--;
+    childBlock.style.top = `${positionY}px`;
   }
-}
+  setTimeout(moveChildBlock, 5);
+};
+moveChildBlock();
 
-moveBlock();
+const seconds = document.querySelector("#seconds");
+const startBtn = document.querySelector("#start");
+const stopBtn = document.querySelector("#stop");
+const resetBtn = document.querySelector("#reset");
+
+const gif = document.getElementById("timeGif");
+const png = document.getElementById("timePng");
+
+let interval;
+let secs = 0;
+
+startBtn.onclick = () => {
+  if (!interval) {
+    interval = setInterval(() => {
+      secs++;
+      seconds.innerText = secs;
+    }, 1000);
+  }
+};
+
+stopBtn.onclick = () => {
+  clearInterval(interval);
+  interval = null;
+};
+
+resetBtn.onclick = () => {
+  clearInterval(interval);
+  interval = null;
+  secs = 0;
+  seconds.innerText = 0;
+};

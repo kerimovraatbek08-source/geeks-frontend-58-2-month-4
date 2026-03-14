@@ -53,9 +53,86 @@ console.log(numbers.replace(regExp, "*"));
 let num = 0;
 const counter = () => {
   num++;
-  console.log(num);
+  //console.log(num);
   if (num < 500) {
     requestAnimationFrame(counter);
   }
 };
 counter();
+
+// Tab slider
+const tabContentBlocks = document.querySelectorAll(".tab_content_block");
+const tabContentItems = document.querySelectorAll(".tab_content_item");
+const tabContentItemsParent = document.querySelector(".tab_content_items");
+
+const hideTabContent = () => {
+  tabContentBlocks.forEach((tabBlock) => {
+    tabBlock.style.display = "none";
+  });
+  tabContentItems.forEach((tabItem) => {
+    tabItem.classList.remove("tab_content_item_active");
+  });
+};
+
+const showTabContent = (i = 0) => {
+  tabContentBlocks[i].style.display = "block";
+  tabContentItems[i].classList.add("tab_content_item_active");
+};
+
+hideTabContent();
+showTabContent();
+
+tabContentItemsParent.onmousemove = (event) => {
+  if (event.target.classList.contains("tab_content_item")) {
+    tabContentItems.forEach((tabItem, tabIndex) => {
+      if (event.target === tabItem) {
+        hideTabContent();
+        showTabContent(tabIndex);
+      }
+    });
+  }
+};
+
+// Converter
+const somInput = document.querySelector("#som");
+const usdInput = document.querySelector("#usd");
+const eurInput = document.querySelector("#eur");
+
+const converter = (element) => {
+  element.oninput = () => {
+    if (element.value === "") {
+      usdInput.value = "";
+      eurInput.value = "";
+      somInput.value = "";
+      return;
+    }
+
+    const request = new XMLHttpRequest();
+    request.open("GET", "../data/converter.json");
+    request.setRequestHeader("Content-type", "application/json");
+    request.send();
+
+    request.onload = () => {
+      const data = JSON.parse(request.response);
+
+      if (element.id === "som") {
+        usdInput.value = (element.value / data.usd).toFixed(2);
+        eurInput.value = (element.value / data.eur).toFixed(2);
+      }
+
+      if (element.id === "usd") {
+        somInput.value = (element.value * data.usd).toFixed(2);
+        eurInput.value = ((element.value * data.usd) / data.eur).toFixed(2);
+      }
+
+      if (element.id === "eur") {
+        somInput.value = (element.value * data.eur).toFixed(2);
+        usdInput.value = ((element.value * data.eur) / data.usd).toFixed(2);
+      }
+    };
+  };
+};
+
+converter(somInput);
+converter(usdInput);
+converter(eurInput);
