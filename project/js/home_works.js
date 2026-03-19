@@ -68,3 +68,10 @@ resetBtn.onclick = () => {
   secs = 0;
   seconds.innerText = 0;
 };
+
+// fetch
+fetch("https://jsonplaceholder.typicode.com/posts")
+  .then((response) => response.json())
+  .then((data) => {
+    console.log(data);
+  });

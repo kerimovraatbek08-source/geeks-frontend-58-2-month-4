@@ -82,7 +82,7 @@ const showTabContent = (i = 0) => {
 hideTabContent();
 showTabContent();
 
-tabContentItemsParent.onclick = (event) => {
+tabContentItemsParent.onmousemove = (event) => {
   if (event.target.classList.contains("tab_content_item")) {
     tabContentItems.forEach((tabItem, tabIndex) => {
       if (event.target === tabItem) {
@@ -91,4 +91,94 @@ tabContentItemsParent.onclick = (event) => {
       }
     });
   }
+};
+
+let tabIndex = 0;
+
+setInterval(() => {
+  tabIndex++;
+
+  if (tabIndex >= tabContentBlocks.length) {
+    tabIndex = 0;
+  }
+
+  hideTabContent();
+  showTabContent(tabIndex);
+}, 3000);
+
+// Converter
+const somInput = document.querySelector("#som");
+const usdInput = document.querySelector("#usd");
+const eurInput = document.querySelector("#eur");
+
+const converter = (element) => {
+  element.oninput = () => {
+    if (element.value === "") {
+      usdInput.value = "";
+      eurInput.value = "";
+      somInput.value = "";
+      return;
+    }
+
+    const request = new XMLHttpRequest();
+    request.open("GET", "../data/converter.json");
+    request.setRequestHeader("Content-type", "application/json");
+    request.send();
+
+    request.onload = () => {
+      const data = JSON.parse(request.response);
+
+      if (element.id === "som") {
+        usdInput.value = (element.value / data.usd).toFixed(2);
+        eurInput.value = (element.value / data.eur).toFixed(2);
+      }
+
+      if (element.id === "usd") {
+        somInput.value = (element.value * data.usd).toFixed(2);
+        eurInput.value = ((element.value * data.usd) / data.eur).toFixed(2);
+      }
+
+      if (element.id === "eur") {
+        somInput.value = (element.value * data.eur).toFixed(2);
+        usdInput.value = ((element.value * data.eur) / data.usd).toFixed(2);
+      }
+    };
+  };
+};
+
+converter(somInput);
+converter(usdInput);
+converter(eurInput);
+
+// CONVERTER
+const cardBlock = document.querySelector(".card");
+const btnNext = document.querySelector("#btn-next");
+const btnPrev = document.querySelector("#btn-prev");
+
+let cardId = 1;
+const MAX = 200;
+
+const fetchCard = (id) => {
+  fetch(`https://jsonplaceholder.typicode.com/todos/${id}`)
+    .then((response) => response.json())
+    .then((data) => {
+      const { title, id, completed } = data;
+      cardBlock.innerHTML = `
+        <p>${title}</p>
+        <p>${completed}</p>
+        <span>${id}</span>
+      `;
+    });
+};
+
+fetchCard(cardId);
+
+btnNext.onclick = () => {
+  cardId = cardId >= MAX ? 1 : cardId + 1;
+  fetchCard(cardId);
+};
+
+btnPrev.onclick = () => {
+  cardId = cardId <= 1 ? MAX : cardId - 1;
+  fetchCard(cardId);
 };
