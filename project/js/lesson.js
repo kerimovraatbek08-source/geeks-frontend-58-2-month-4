@@ -182,3 +182,39 @@ btnPrev.onclick = () => {
   cardId = cardId <= 1 ? MAX : cardId - 1;
   fetchCard(cardId);
 };
+// WEATHER
+const searchInput = document.querySelector("#searchInput");
+const searchButton = document.querySelector("#search");
+const city = document.querySelector(".city");
+const temp = document.querySelector(".temp");
+
+const VERSION = "2.5";
+const API_KEY = "291aa3950880603684e43c6cc36aed88";
+const BASE_API = `https://api.openweathermap.org/data/${VERSION}/weather`;
+
+searchButton.onclick = () => {
+  if (searchInput.value !== "") {
+    fetch(
+      `${BASE_API}?q=${searchInput.value}&units=metric&lang=ru&appid=${API_KEY}`,
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.name) {
+          city.innerHTML = data.name;
+          city.style.color = "white";
+          temp.innerHTML = Math.round(data.main.temp) + "&deg;С";
+        } else {
+          city.innerHTML = "Город с таким названием не найден";
+          temp.innerHTML = "";
+          city.style.color = "red";
+        }
+      });
+    searchInput.value = "";
+  } else {
+    city.innerHTML = "Введите название города";
+    temp.innerHTML = "";
+    city.style.color = "red";
+  }
+};
+//℃
+// Как выполнить вызов API

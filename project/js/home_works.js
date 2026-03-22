@@ -9,11 +9,12 @@ gmailButton.onclick = () => {
     gmailResult.innerText = "OK, GOOD!";
     gmailResult.style.color = "green";
   } else {
-    gmailResult.innerText = "NO,ERROR X(";
+    gmailResult.innerText = "NO, ERROR X(";
     gmailResult.style.color = "red";
   }
 };
 
+// ===== Движение блока =====
 const childBlock = document.querySelector(".child_block");
 
 let positionX = 0;
@@ -37,13 +38,11 @@ const moveChildBlock = () => {
 };
 moveChildBlock();
 
+// ===== Таймер =====
 const seconds = document.querySelector("#seconds");
 const startBtn = document.querySelector("#start");
 const stopBtn = document.querySelector("#stop");
 const resetBtn = document.querySelector("#reset");
-
-const gif = document.getElementById("timeGif");
-const png = document.getElementById("timePng");
 
 let interval;
 let secs = 0;
@@ -69,9 +68,36 @@ resetBtn.onclick = () => {
   seconds.innerText = 0;
 };
 
-// fetch
-fetch("https://jsonplaceholder.typicode.com/posts")
-  .then((response) => response.json())
+// ===== Загрузка characters.json =====
+const list = document.querySelector(".characters-list");
+const defaultPhoto =
+  "https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg";
+
+fetch("../data/characters.json")
+  .then((res) => {
+    if (!res.ok) throw new Error("Ошибка загрузки characters.json");
+    return res.json();
+  })
   .then((data) => {
-    console.log(data);
-  });
+    data.forEach((item) => {
+      const card = document.createElement("div");
+      card.classList.add("card");
+
+      card.innerHTML = `
+        <img src="${item.photo || defaultPhoto}">
+        <h3>${item.name}</h3>
+        <p>Age: ${item.age}</p>
+      `;
+
+      list.append(card);
+    });
+  })
+  .catch((err) => console.log(err));
+
+fetch("../data/any.json")
+  .then((res) => {
+    if (!res.ok) throw new Error("Ошибка загрузки any.json");
+    return res.json();
+  })
+  .then((data) => console.log("ANY JSON:", data))
+  .catch((err) => console.log(err));
